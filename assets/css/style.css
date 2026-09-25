@@ -1,0 +1,868 @@
+/* =========================================================
+   La Torre dell'Alchimista — style.css
+
+   Lo sfondo originale (3764x6688) è tagliato in 6 fasce, una per
+   sezione. Sopra i 1024px le sezioni sono alte uno schermo e si
+   impilano (position:sticky); sotto, tornano in flusso normale.
+   ========================================================= */
+
+:root{
+  /* colori campionati dallo sfondo originale */
+  --blu-hero:#081c40;
+  --blu-disco:#1e3757;
+  --blu-media:#1d304c;
+  --crema-band:#f3dec2;
+  --crema-conc:#f5e2c7;
+  --crema-cont:#f4dfc3;
+
+  --oro:#c9a34e;
+  --oro-chiaro:#e0be7c;
+  --inchiostro:#2b2018;
+  --inchiostro-soft:#4a3b2c;
+  --su-blu:#f1e4cd;
+  --su-blu-soft:#cdd8e4;
+
+  --display:"Cormorant Garamond",Georgia,"Times New Roman",serif;
+  --testo:"EB Garamond",Georgia,"Times New Roman",serif;
+
+  --nav-h:74px;
+  --gutter:clamp(18px,5vw,86px);
+  --max:1500px;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+
+html{scroll-behavior:smooth;scroll-padding-top:var(--nav-h);-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+body{
+  margin:0;
+  font-family:var(--testo);
+  color:var(--inchiostro);
+  background:var(--blu-hero);
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* height:auto è indispensabile: gli attributi width/height nell'HTML
+   (che servono a evitare il layout shift) altrimenti vincono su aspect-ratio */
+img{max-width:100%;height:auto;display:block}
+ul{list-style:none;margin:0;padding:0}
+a{text-decoration:none;color:inherit}
+
+/* ---------------------------------------------------------
+   NAV
+   --------------------------------------------------------- */
+.nav{
+  position:fixed;inset:0 0 auto 0;z-index:50;
+  height:var(--nav-h);
+  display:flex;align-items:center;
+  transition:opacity .7s ease,transform .6s cubic-bezier(.4,0,.2,1),
+              background-color .35s ease,box-shadow .35s ease,backdrop-filter .35s ease;
+}
+.nav.is-stuck{
+  background:rgba(8,22,44,.92);
+  backdrop-filter:blur(10px);
+  box-shadow:0 1px 0 rgba(201,163,78,.28);
+}
+.nav__in{
+  width:100%;max-width:var(--max);margin-inline:auto;
+  padding-inline:var(--gutter);
+  display:flex;align-items:center;gap:clamp(16px,3vw,48px);
+}
+.nav__logo img{width:clamp(170px,17vw,240px);height:auto}
+
+.nav__menu{
+  margin-left:auto;
+  display:flex;align-items:center;gap:clamp(18px,3vw,46px);
+}
+.nav__links{display:flex;align-items:center;gap:clamp(14px,2vw,30px)}
+.nav__links a{
+  font-size:clamp(14px,1.05vw,16.5px);
+  color:var(--su-blu);
+  letter-spacing:.02em;
+  padding-block:6px;
+  border-bottom:1.5px solid transparent;
+  transition:color .2s ease,border-color .2s ease;
+}
+.nav__links a:hover{color:var(--oro-chiaro)}
+.nav__links a.is-active{color:#fff;border-bottom-color:var(--oro)}
+
+.nav__social{display:flex;align-items:center;gap:14px}
+.nav__social a{
+  display:grid;place-items:center;
+  width:30px;height:30px;
+  color:var(--su-blu);
+  transition:color .2s ease,transform .2s ease;
+}
+.nav__social a:hover{color:var(--oro-chiaro);transform:translateY(-2px)}
+.nav__social svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.6}
+
+/* hamburger */
+.nav__burger{
+  display:none;
+  margin-left:auto;
+  width:44px;height:44px;
+  background:none;border:0;padding:10px;cursor:pointer;
+}
+.nav__burger span{
+  display:block;height:1.6px;background:var(--su-blu);margin:5px 0;
+  transition:transform .3s ease,opacity .25s ease;
+}
+.nav__burger[aria-expanded="true"] span:nth-child(1){transform:translateY(6.6px) rotate(45deg)}
+.nav__burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.nav__burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-6.6px) rotate(-45deg)}
+
+/* ---------------------------------------------------------
+   SEZIONI A TUTTO SCHERMO, IMPILATE
+
+   Ogni sezione è alta quanto la finestra ed è position:sticky
+   con z-index crescente: resta ferma mentre la successiva le
+   scorre sopra, quindi ognuna sembra formarsi dalla precedente.
+   È lo stesso meccanismo del sito personale.
+
+   L'illustrazione non può riempire uno schermo 16:9: le fasce
+   originali sono panoramiche (da 3,1:1 a 5,1:1). Sta quindi su
+   un proprio livello appoggiato in fondo alla sezione, larga
+   tutta la pagina, con il colore piatto della fascia a occupare
+   il resto — il testo vive lì sopra, sempre su fondo pulito.
+
+   Sotto i 1024px il pin si disattiva e le sezioni tornano in
+   flusso normale, come su qualsiasi telefono.
+   --------------------------------------------------------- */
+main{position:relative;z-index:0}
+
+.sec{
+  position:sticky;top:0;
+  min-height:100svh;
+  /* la nav è fissa: il contenuto deve partire sotto di lei */
+  padding-top:var(--nav-h);
+  overflow:hidden;
+  display:flex;flex-direction:column;justify-content:center;
+}
+/* la scala d'impilamento: ognuna copre la precedente */
+.sec--hero{z-index:1}
+.sec--band{z-index:2}
+.sec--disco{z-index:3}
+.sec--concerti{z-index:4}
+.sec--media{z-index:5}
+.sec--contatti{z-index:6}
+
+/* --- il livello illustrato -------------------------------
+   Le immagini sono 16:9 come lo schermo, quindi riempiono la
+   sezione senza quasi ritagliare. Ognuna è dipinta con una zona
+   calma (campo pieno, senza dettagli) dalla parte dove cade il
+   testo; --pos dice da che lato ancorare l'eventuale ritaglio. */
+.sec::after{
+  content:"";
+  position:absolute;inset:0;z-index:0;
+  background-image:var(--fascia);
+  background-size:cover;
+  background-position:var(--pos,center);
+  background-repeat:no-repeat;
+}
+
+/* Velo nel colore della fascia stessa: la zona dove cade il testo è già
+   piatta nell'illustrazione, quindi il velo non "sporca" il disegno —
+   garantisce solo che il contrasto regga a qualsiasi altezza di finestra. */
+.sec::before{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(to right,
+    rgb(var(--scrim) / .90) 0%,
+    rgb(var(--scrim) / .78) 18%,
+    rgb(var(--scrim) / .42) 38%,
+    rgb(var(--scrim) / 0)   60%);
+}
+.sec--hero{--scrim:6 17 38}
+.sec--hero::before{
+  background:linear-gradient(97deg,
+    rgb(var(--scrim) / .90) 0%,
+    rgb(var(--scrim) / .72) 22%,
+    rgb(var(--scrim) / .30) 44%,
+    rgb(var(--scrim) / 0)   62%);
+}
+
+.sec__in{
+  position:relative;z-index:2;
+  width:100%;max-width:var(--max);margin-inline:auto;
+  padding-inline:var(--gutter);
+}
+
+/* --ar    proporzione dell'immagine: 16:9. Serve sotto i 1024px, dove
+           l'immagine torna larga 100% in coda alla sezione e l'altezza
+           la si calcola da lì.
+   --pos   da che parte ancorare il ritaglio quando lo schermo non è 16:9
+   --scrim colore campionato dalla zona calma, per il velo sul testo */
+.sec--band{
+  --ar:1.778;--pos:center;--scrim:239 210 172;
+  --fascia:image-set(url("../bg2/band-1x.webp") 1x,url("../bg2/band-2x.webp") 2x);
+  background-color:#efd2ac;
+}
+.sec--disco{
+  --ar:1.778;--pos:center;--scrim:17 62 107;
+  --fascia:image-set(url("../bg2/discografia-1x.webp") 1x,url("../bg2/discografia-2x.webp") 2x);
+  background-color:#113e6b;
+}
+.sec--concerti{
+  --ar:1.778;--pos:right center;--scrim:247 225 194;
+  --fascia:image-set(url("../bg2/concerti-1x.webp") 1x,url("../bg2/concerti-2x.webp") 2x);
+  background-color:#f7e1c2;
+}
+.sec--media{
+  --ar:1.778;--pos:center;--scrim:37 65 97;
+  --fascia:image-set(url("../bg2/media-1x.webp") 1x,url("../bg2/media-2x.webp") 2x);
+  background-color:#254161;
+}
+.sec--contatti{
+  --ar:1.778;--pos:center;--scrim:230 200 162;
+  --fascia:image-set(url("../bg2/contatti-1x.webp") 1x,url("../bg2/contatti-2x.webp") 2x);
+  background-color:#e6c8a2;
+}
+
+/* --- dove sta il contenuto dentro ciascuna scena -----------
+   Non è uguale per tutte: ogni immagine ha la sua zona calma. */
+
+/* "La band": calma in alto a sinistra e nella fascia bassa.
+   L'introduzione va in cima, la formazione in fondo, la scena
+   dipinta resta libera in mezzo. */
+.sec--band .sec__in{
+  flex:1;display:flex;flex-direction:column;justify-content:space-between;
+  /* senza margine i nomi toccano il fondo, cioè l'ultimo 8% dello schermo
+     dove la comparsa non scatta: la sezione è incollata in cima, quindi
+     non salirebbero mai abbastanza da accendersi (vedi SOGLIA in main.js) */
+  --pb:clamp(28px,7svh,80px);   /* serve anche alla colonna ad arco */
+  padding-bottom:var(--pb);
+}
+.sec--band .members{margin-top:0}
+
+/* "Contatti": la calma è il cielo in alto, sotto c'è il mare */
+.sec--contatti{justify-content:flex-start}
+.sec--contatti .sec__in{padding-top:clamp(20px,4svh,56px)}
+
+/* la hero è l'unica in cui l'illustrazione riempie tutto lo schermo:
+   la sua fascia è quasi 2:1, quindi regge il taglio. */
+.sec--hero{
+  --ar:1.845;
+  --hero-pos:72% center;
+  padding-bottom:0;
+  background-color:var(--blu-hero);
+  padding-top:var(--nav-h);
+}
+.sec--hero::after{
+  inset:0;height:auto;
+  background-image:image-set(url("../bg/hero-1x.webp") 1x,url("../bg/hero-2x.webp") 2x);
+  background-position:var(--hero-pos);
+  animation:slowzoom 42s ease-in-out infinite alternate;
+}
+
+/* ---------------------------------------------------------
+   TIPOGRAFIA COMUNE
+   --------------------------------------------------------- */
+.h2{
+  font-family:var(--display);
+  font-weight:500;
+  font-size:clamp(38px,4.6vw,66px);
+  line-height:1;
+  letter-spacing:.005em;
+  margin:0;
+}
+.rule{
+  display:block;width:58px;height:2px;
+  background:var(--oro);
+  margin:18px 0 26px;
+}
+.lead{
+  font-size:clamp(15.5px,1.22vw,19px);
+  line-height:1.72;
+  margin:0;
+  max-width:34ch;
+}
+.sec--disco .h2,.sec--media .h2{color:var(--su-blu)}
+.sec--disco .lead,.sec--media .lead{color:var(--su-blu-soft)}
+
+/* bottoni */
+.btn{
+  display:inline-flex;align-items:center;gap:14px;
+  margin-top:32px;
+  padding:13px 26px;
+  border:1px solid var(--oro);
+  color:var(--inchiostro);
+  font-size:clamp(11.5px,.85vw,13px);
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  transition:background-color .25s ease,color .25s ease,border-color .25s ease;
+}
+.btn__ar{transition:transform .25s ease;display:inline-block}
+.btn:hover{background:var(--oro);color:#1b140c;border-color:var(--oro)}
+.btn:hover .btn__ar{transform:translateX(5px)}
+.btn--light{color:var(--su-blu)}
+.btn--light:hover{color:#1b140c}
+
+/* ---------------------------------------------------------
+   HERO
+   --------------------------------------------------------- */
+.hero{max-width:var(--max)}
+.hero__title{margin:0}
+.hero__title img{width:clamp(280px,40vw,560px);height:auto}
+.hero__claim{
+  font-family:var(--display);
+  font-style:italic;
+  font-size:clamp(21px,2.2vw,31px);
+  color:var(--oro-chiaro);
+  margin:14px 0 0;
+}
+.hero__text{
+  font-size:clamp(15.5px,1.25vw,19px);
+  line-height:1.72;
+  color:var(--su-blu);
+  margin:26px 0 0;
+  max-width:44ch;
+  text-shadow:0 1px 14px rgba(4,12,26,.55);
+}
+.hero .btn{margin-top:34px}
+
+.hero__scroll{
+  position:absolute;left:50%;bottom:26px;translate:-50% 0;z-index:3;
+  width:22px;height:34px;border:1.4px solid rgba(241,228,205,.55);border-radius:12px;
+}
+.hero__scroll span{
+  position:absolute;left:50%;top:7px;translate:-50% 0;
+  width:2px;height:6px;background:var(--oro-chiaro);border-radius:2px;
+  animation:scrollBounce 1.6s ease-in-out infinite;
+}
+
+/* ---------------------------------------------------------
+   LA BAND
+   --------------------------------------------------------- */
+.members{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:22px;
+  margin-top:clamp(28px,3.2vw,52px);
+  text-align:center;
+}
+.members li{
+  display:flex;flex-direction:column;gap:5px;
+  /* alone color carta: i nomi centrali cadono sul crinale dipinto */
+  text-shadow:0 0 3px rgb(243 222 194 / .95),0 1px 9px rgb(243 222 194 / .85);
+}
+.members__name{
+  font-family:var(--display);
+  font-weight:600;
+  font-size:clamp(16px,1.25vw,20px);
+  color:var(--inchiostro);
+}
+.members__role{
+  font-style:italic;
+  font-size:clamp(13.5px,1vw,16px);
+  color:#9a6b24;
+}
+
+/* --- la colonna ad arco -------------------------------------
+   Chi ha un ritratto ha il nome come link alla sua pagina. Al
+   passaggio del mouse (o al focus da tastiera) il ritratto sale dal
+   basso dentro un arco alto quanto la sezione, nella colonna del
+   nome: il nome resta alla base, come un'iscrizione, e il resto
+   della scena si ritira. Solo su schermi larghi con mouse; sotto,
+   il nome è un semplice link. */
+a.members__name{color:inherit;text-decoration:none;transition:color .5s ease}
+.members__card{display:none}
+
+@media (min-width:1025px) and (hover:hover){
+  /* la colonna si misura sul .sec__in, non sul <li>: per questo il
+     <li> resta statico e --col dice in quale delle 4 colonne sta */
+  .members__card{
+    --colw:calc((100% - 2 * var(--gutter) - 3 * 22px) / 4);
+    display:block;
+    position:absolute;z-index:3;
+    top:clamp(10px,2svh,24px);
+    bottom:calc(var(--pb) - 18px);
+    left:calc(var(--gutter) + var(--col,0) * (var(--colw) + 22px));
+    width:var(--colw);
+    border:1px solid var(--oro);
+    border-radius:50vw 50vw 0 0;   /* ridotto da solo a mezzo cerchio */
+    overflow:hidden;
+    box-shadow:0 30px 60px -24px rgb(43 32 24 / .6);
+    clip-path:inset(100% 0 0 0);
+    visibility:hidden;
+    /* chiusura più svelta dell'apertura, come le comparse */
+    transition:clip-path .5s ease,visibility 0s linear .5s;
+    text-shadow:none;
+  }
+  .members__card img{
+    width:100%;height:100%;object-fit:cover;object-position:52% top;
+    scale:1.06;transition:scale 1.2s cubic-bezier(.22,1,.36,1);
+  }
+  /* velo scuro in basso: il nome ci si posa sopra e resta leggibile */
+  .members__card::after{
+    content:"";position:absolute;inset:auto 0 0 0;height:34%;
+    background:linear-gradient(to top,rgb(16 20 32 / .82),rgb(16 20 32 / 0));
+  }
+  .members__has-foto:hover .members__card,
+  .members__has-foto:focus-within .members__card{
+    clip-path:inset(0 0 0 0);
+    visibility:visible;
+    transition:clip-path 1s cubic-bezier(.22,1,.36,1),visibility 0s;
+  }
+  .members__has-foto:hover .members__card img,
+  .members__has-foto:focus-within .members__card img{scale:1}
+
+  /* il nome diventa un'iscrizione chiara sulla base dell'arco */
+  .members__has-foto a.members__name,
+  .members__has-foto .members__role{position:relative;z-index:4;transition:color .5s ease,text-shadow .5s ease}
+  .members__has-foto:hover a.members__name,
+  .members__has-foto:focus-within a.members__name{color:var(--su-blu)}
+  .members__has-foto:hover .members__role,
+  .members__has-foto:focus-within .members__role{color:var(--oro-chiaro)}
+  .members__has-foto:hover,
+  .members__has-foto:focus-within{text-shadow:0 1px 8px rgb(10 14 24 / .7)}
+
+  /* la scena si ritira */
+  .sec--band::after,
+  .sec--band .band__intro,
+  .sec--band .members li{transition:opacity .8s ease}
+  .sec--band:has(.members__has-foto:hover)::after,
+  .sec--band:has(.members__has-foto:focus-within)::after{opacity:.45}
+  .sec--band:has(.members__has-foto:hover) .band__intro,
+  .sec--band:has(.members__has-foto:focus-within) .band__intro{opacity:.5}
+  .sec--band:has(.members__has-foto:hover) .members li:not(.members__has-foto),
+  .sec--band:has(.members__has-foto:focus-within) .members li:not(.members__has-foto){opacity:.3}
+}
+
+/* ---------------------------------------------------------
+   DISCOGRAFIA
+   --------------------------------------------------------- */
+.disco{
+  display:grid;
+  grid-template-columns:minmax(260px,30%) 1fr;
+  gap:clamp(28px,4vw,64px);
+  align-items:center;
+}
+.albums{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:clamp(16px,2.2vw,36px);
+}
+.album a{display:block;text-align:center}
+.album img{
+  width:100%;aspect-ratio:1;object-fit:cover;
+  border:1px solid rgba(201,163,78,.35);
+  box-shadow:0 14px 34px rgba(3,10,22,.42);
+  transition:transform .7s cubic-bezier(.2,.6,.2,1),box-shadow .5s ease,filter .5s ease;
+}
+.album a:hover img{transform:translateY(-8px) scale(1.02);box-shadow:0 24px 46px rgba(3,10,22,.58);filter:saturate(1.08)}
+.album__title{
+  display:block;
+  font-family:var(--display);
+  font-weight:600;
+  font-size:clamp(15px,1.3vw,21px);
+  color:var(--su-blu);
+  margin-top:16px;
+}
+.album__year{
+  display:block;
+  font-size:clamp(12.5px,.95vw,15px);
+  color:var(--su-blu-soft);
+  margin-top:4px;
+}
+
+/* ---------------------------------------------------------
+   CONCERTI
+   --------------------------------------------------------- */
+.concerti{
+  display:grid;
+  grid-template-columns:minmax(230px,26%) minmax(0,1fr);
+  gap:clamp(26px,3.2vw,48px);
+  align-items:center;
+}
+/* max-width contenuto: le righe devono restare a sinistra dell'arco
+   che chiude la fascia "Concerti" sulla destra */
+.dates{display:flex;flex-direction:column;gap:2px;max-width:min(520px,100%);margin-right:auto}
+.dates__row{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:10px;
+  padding:13px 4px;
+  border-bottom:1px solid rgba(43,32,24,.22);
+  font-size:clamp(13px,1vw,16px);
+  color:var(--inchiostro-soft);
+  text-align:center;
+}
+.dates__row:first-child{border-top:1px solid rgba(43,32,24,.22)}
+.dates__row span{position:relative}
+.dates__row span+span::before{
+  content:"";position:absolute;left:-6px;top:50%;translate:0 -50%;
+  width:1px;height:15px;background:rgba(43,32,24,.28);
+}
+.dates--vuoto{
+  border-top:1px solid rgba(43,32,24,.22);
+  border-bottom:1px solid rgba(43,32,24,.22);
+  padding:26px 4px;
+  font-family:var(--display);
+  font-style:italic;
+  font-size:clamp(17px,1.5vw,23px);
+  text-align:center;
+}
+
+/* ---------------------------------------------------------
+   MEDIA
+   --------------------------------------------------------- */
+.media{
+  display:grid;
+  grid-template-columns:minmax(230px,26%) 1fr;
+  gap:clamp(26px,3.4vw,56px);
+  align-items:center;
+}
+.cards{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:clamp(12px,1.5vw,24px);
+}
+.card a{
+  display:flex;flex-direction:column;
+  background:#11161d;
+  height:100%;
+  box-shadow:0 14px 32px rgba(3,10,22,.45);
+  transition:transform .7s cubic-bezier(.2,.6,.2,1),box-shadow .5s ease;
+}
+.card a:hover{transform:translateY(-8px);box-shadow:0 24px 44px rgba(3,10,22,.62)}
+.card__img{display:block;aspect-ratio:16/10;overflow:hidden}
+.card__img img{width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.2,.6,.2,1)}
+.card a:hover .card__img img{transform:scale(1.07)}
+.card__body{
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:center;
+  gap:10px;
+  padding:16px 16px 18px;
+  color:var(--su-blu);
+}
+.card__t{
+  grid-column:1;
+  font-family:var(--display);
+  font-weight:600;
+  font-size:clamp(16px,1.25vw,20px);
+}
+.card__s{
+  grid-column:1;
+  font-size:clamp(12.5px,.92vw,14.5px);
+  line-height:1.5;
+  color:#9fb0c4;
+}
+.card__ico{
+  grid-column:2;grid-row:1 / span 2;
+  display:grid;place-items:center;
+  width:34px;height:34px;border-radius:50%;
+  border:1.3px solid rgba(241,228,205,.6);
+  font-size:13px;line-height:1;
+  transition:background-color .25s ease,color .25s ease;
+}
+.card__ico--play{font-size:10px;padding-left:2px}
+.card a:hover .card__ico{
+  background:var(--oro);color:#11161d;border-color:var(--oro);
+  animation:pulseRing 1.6s ease-in-out infinite;
+}
+
+/* ---------------------------------------------------------
+   CONTATTI
+   --------------------------------------------------------- */
+.contatti__head{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:clamp(24px,4vw,60px);flex-wrap:wrap;
+}
+.contatti__list{
+  display:flex;align-items:center;gap:clamp(16px,2.6vw,42px);flex-wrap:wrap;
+}
+.contatti__list li{display:flex;align-items:center;gap:11px}
+.contatti__ico{
+  display:grid;place-items:center;width:28px;height:28px;color:var(--inchiostro);
+}
+.contatti__ico svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.contatti__list a{
+  font-size:clamp(13px,1vw,16px);
+  color:var(--inchiostro-soft);
+  border-bottom:1px solid transparent;
+  transition:color .2s ease,border-color .2s ease;
+}
+.contatti__list a:hover{color:#8a5d18;border-bottom-color:var(--oro)}
+.contatti__lead{margin-top:clamp(22px,2.6vw,34px)}
+
+/* ---------------------------------------------------------
+   FOOTER
+   --------------------------------------------------------- */
+.foot{
+  /* deve stare sopra le sezioni impilate, che sono posizionate */
+  position:relative;z-index:1;
+  background:var(--blu-hero);
+  color:#8fa2ba;
+  text-align:center;
+  font-size:13.5px;
+  padding:26px var(--gutter);
+  letter-spacing:.03em;
+}
+.foot p{margin:0}
+
+/* =========================================================
+   MOVIMENTI
+   Stesso vocabolario del sito personale mghilardini.it:
+   comparse da 1s ease sfalsate di ~.12s, pulsazioni da 1.6s
+   ease-in-out infinite, zoom lento sull'immagine di apertura.
+   ========================================================= */
+
+/* --- comparsa allo scroll ---------------------------------
+   Lo stato segue la posizione dello scroll, non scatta una volta
+   sola: main.js aggiunge .is-in quando l'elemento sale in vista e
+   la toglie quando torna sotto il bordo inferiore. Scorrendo
+   avanti e indietro il testo entra ed esce ogni volta.
+   Il ritardo di ognuno sta nella variabile --d scritta nell'HTML. */
+[data-reveal]{
+  opacity:0;
+  transform:translateY(22px);
+  transition:opacity 1s ease,transform 1s ease;
+  transition-delay:var(--d,0s);
+}
+[data-reveal="left"] {transform:translateX(-30px)}   /* intro di sezione: entrano da sinistra */
+[data-reveal="right"]{transform:translateX(30px)}    /* copertine, date, card: entrano da destra */
+[data-reveal].is-in{opacity:1;transform:none}
+
+/* Il ritorno è più svelto dell'andata e senza scalata: l'entrata è
+   una scena che si compone, l'uscita deve solo togliersi di mezzo. */
+[data-reveal]:not(.is-in){transition-duration:.55s;transition-delay:0s}
+
+/* il filetto dorato non sfuma: si disegna */
+.rule[data-reveal]{
+  width:0;opacity:1;transform:none;
+  transition:width .9s cubic-bezier(.22,1,.36,1);
+  transition-delay:var(--d,0s);
+}
+.rule[data-reveal].is-in{width:58px}
+.rule[data-reveal]:not(.is-in){transition-duration:.45s;transition-delay:0s}
+
+/* --- apertura: il titolo sale da dietro la propria riga --- */
+.hero__title{overflow:hidden}
+.hero__title img{animation:heroUp 1.15s cubic-bezier(.22,1,.36,1) .15s both}
+@keyframes heroUp{from{transform:translateY(112%)}to{transform:translateY(0)}}
+
+/* --- respiro lento dell'illustrazione di apertura --- */
+@keyframes slowzoom{from{transform:scale(1.03)}to{transform:scale(1.12)}}
+
+/* --- la barra di navigazione scende all'apertura --- */
+.nav{animation:navIn .7s cubic-bezier(.4,0,.2,1) .15s both}
+@keyframes navIn{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:none}}
+
+/* --- pulsazioni ------------------------------------------- */
+@keyframes scrollBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+@keyframes pulseRing{
+  0%,100%{box-shadow:0 0 0 0 rgba(201,163,78,.5)}
+  50%    {box-shadow:0 0 0 8px rgba(201,163,78,0)}
+}
+
+/* --- rispetto delle preferenze di sistema ------------------
+   Chi ha chiesto meno animazioni vede tutto, subito e fermo. */
+@media (prefers-reduced-motion:reduce){
+  [data-reveal],.rule[data-reveal]{
+    opacity:1 !important;transform:none !important;transition:none !important;
+  }
+  .rule[data-reveal]{width:58px !important}
+  .hero__title img,.sec--hero::after{animation:none !important}
+  .nav{animation:none}
+  .hero__scroll span,.card a:hover .card__ico{animation:none !important}
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+/* --- tablet: il layout si impila e il contenuto diventa molto più alto
+   dello schermo. Tenere le sezioni bloccate a 100svh qui significherebbe
+   nascondere il fondo di ognuna: si torna al flusso normale, con la fascia
+   appoggiata in coda alla sezione, larga tutta la pagina. --- */
+@media (max-width:1024px){
+  .sec{
+    /* relative, non static: serve comunque che la sezione faccia da
+       riferimento ai propri livelli assoluti (velo e illustrazione),
+       altrimenti si ancorerebbero a <main> e finirebbero tutti in
+       fondo alla pagina. "relative" toglie il pin, non il riferimento. */
+    position:relative;
+    min-height:0;
+    padding-bottom:calc(100vw / var(--ar));
+    justify-content:flex-start;
+  }
+  .sec__in{padding-block:clamp(40px,4.4vw,58px)}
+  .sec::after{
+    inset:auto 0 0 0;
+    height:calc(100vw / var(--ar));
+    background-size:100% auto;
+    background-position:center bottom;
+  }
+  /* il testo sta già sul colore piatto: niente velo */
+  .sec::before{display:none}
+
+  /* la hero resta a tutto schermo: è l'unica col testo sopra al disegno */
+  .sec--hero{
+    --hero-pos:74% center;
+    min-height:min(calc(100vw / 1.845),100svh);
+    padding-bottom:0;
+    justify-content:center;
+  }
+  .sec--hero::after{inset:0;height:auto;background-size:cover}
+  .sec--hero::before{
+    display:block;
+    background:linear-gradient(101deg,
+      rgb(var(--scrim) / .92) 0%,
+      rgb(var(--scrim) / .78) 40%,
+      rgb(var(--scrim) / .38) 70%,
+      rgb(var(--scrim) / .20) 100%);
+  }
+
+  .disco,.concerti,.media{grid-template-columns:1fr;align-items:start}
+  .disco__intro,.concerti__intro,.media__intro{margin-bottom:38px}
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .lead{max-width:46ch}
+  .lead br{display:none}
+  .hero__text br{display:none}
+}
+
+/* --- da qui in giù il menu diventa a comparsa --- */
+@media (max-width:900px){
+  :root{--nav-h:64px}
+
+  .nav{background:rgba(8,22,44,.92);backdrop-filter:blur(10px)}
+  .nav__burger{display:block;order:3}
+
+  .nav__menu{
+    position:fixed;inset:var(--nav-h) 0 auto 0;
+    margin-left:0;
+    flex-direction:column;align-items:stretch;gap:0;
+    background:rgba(8,22,44,.97);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid rgba(201,163,78,.3);
+    padding:8px 0 20px;
+    clip-path:inset(0 0 100% 0);
+    opacity:0;pointer-events:none;
+    transition:clip-path .38s ease,opacity .25s ease;
+  }
+  .nav__menu.is-open{clip-path:inset(0 0 0 0);opacity:1;pointer-events:auto}
+
+  .nav__links{flex-direction:column;align-items:stretch;gap:0}
+  .nav__links a{
+    display:block;
+    padding:15px var(--gutter);
+    font-size:18px;
+    border-bottom:1px solid rgba(241,228,205,.09);
+  }
+  .nav__links a.is-active{border-bottom-color:rgba(241,228,205,.09);color:var(--oro-chiaro)}
+  .nav__social{justify-content:center;gap:26px;padding-top:22px}
+  .nav__social a{width:38px;height:38px}
+  .nav__social svg{width:24px;height:24px}
+}
+
+/* --- mobile --- */
+@media (max-width:720px){
+  .sec__in{padding-block:clamp(44px,11vw,64px) clamp(30px,7vw,48px)}
+
+  .sec--hero{
+    --hero-pos:76% center;
+    min-height:100svh;
+  }
+  .sec--hero::before{
+    background:linear-gradient(103deg,
+      rgb(var(--scrim) / .93) 0%,
+      rgb(var(--scrim) / .80) 44%,
+      rgb(var(--scrim) / .42) 74%,
+      rgb(var(--scrim) / .24) 100%);
+  }
+
+  .hero__title img{width:min(84vw,340px)}
+  .hero__text{max-width:none}
+
+  .h2{font-size:clamp(34px,10vw,46px)}
+  .rule{margin:15px 0 20px}
+  .lead{max-width:none}
+
+  .members{
+    grid-template-columns:repeat(2,1fr);
+    gap:24px 16px;
+    margin-top:38px;
+    text-align:left;
+  }
+
+  .albums{grid-template-columns:1fr;gap:26px;max-width:340px;margin-inline:auto}
+  .album__title{font-size:19px}
+
+  .dates__row{
+    grid-template-columns:1fr;
+    gap:3px;
+    text-align:left;
+    padding:14px 2px;
+  }
+  .dates__row span+span::before{display:none}
+  .dates__row span:first-child{font-weight:500;color:var(--inchiostro)}
+
+  .cards{grid-template-columns:1fr;gap:16px;max-width:400px;margin-inline:auto}
+  .card__img{aspect-ratio:16/9}
+
+  .contatti__head{flex-direction:column;align-items:flex-start;gap:26px}
+  .contatti__list{flex-direction:column;align-items:flex-start;gap:16px}
+}
+
+@media (max-width:420px){
+  .members{grid-template-columns:1fr}
+}
+
+/* =========================================================
+   SCALA A TUTTO SCHERMO  (solo dove le sezioni sono impilate)
+
+   Con la sezione alta uno schermo intero il testo pensato per una
+   fascia bassa risulta minuscolo. Qui tutto cresce, ma legato a
+   --u: un'unità che è il minore fra larghezza e altezza della
+   finestra. Così su una finestra bassa e larga il testo rimpicciolisce
+   da solo e continua a stare nello spazio sopra l'illustrazione,
+   invece di sbordare e farsi tagliare.
+   ========================================================= */
+@media (min-width:1025px){
+  :root{--u:min(1vw,1.71svh)}
+
+  .h2{font-size:clamp(38px,calc(5.2 * var(--u)),92px)}
+  .rule{
+    width:clamp(48px,calc(5 * var(--u)),80px);
+    margin:clamp(14px,calc(1.6 * var(--u)),26px) 0 clamp(20px,calc(2.2 * var(--u)),36px);
+  }
+  .lead{font-size:clamp(15px,calc(1.45 * var(--u)),22px);max-width:38ch}
+
+  .btn{
+    font-size:clamp(11px,calc(.92 * var(--u)),14px);
+    padding:clamp(11px,calc(1.05 * var(--u)),17px) clamp(20px,calc(2 * var(--u)),32px);
+    margin-top:clamp(22px,calc(2.4 * var(--u)),40px);
+  }
+
+  .members{margin-top:clamp(20px,calc(3.2 * var(--u)),58px)}
+  .members__name{font-size:clamp(15px,calc(1.45 * var(--u)),23px)}
+  .members__role{font-size:clamp(13px,calc(1.15 * var(--u)),18px)}
+
+  .album__title{font-size:clamp(15px,calc(1.5 * var(--u)),24px);margin-top:clamp(10px,calc(1.2 * var(--u)),20px)}
+  .album__year{font-size:clamp(12px,calc(1.05 * var(--u)),17px)}
+
+  /* la colonna delle date deve chiudersi prima dell'arco scuro, cioè prima
+     del bordo destro del pannello crema. L'immagine è in cover ancorata a
+     destra e il pannello finisce al 72% della sua larghezza, quindi il bordo
+     sta a 100% - 28% della larghezza dell'immagine = max(28%, 28% di 16/9 svh).
+     Il riquadro resta allineato a sinistra con le altre sezioni: si stringe
+     solo il margine destro, con 40px di respiro prima del bordo. */
+  .concerti{padding-right:calc(min(50%,var(--max) / 2) - 50% + max(28%,49.8svh) + 40px)}
+  .dates{max-width:none;margin-right:0}
+  .dates__row{
+    font-size:clamp(13px,calc(1.15 * var(--u)),18px);
+    padding:clamp(11px,calc(1.15 * var(--u)),19px) 4px;
+  }
+
+  .card__t{font-size:clamp(15px,calc(1.45 * var(--u)),23px)}
+  .card__s{font-size:clamp(12px,calc(1.05 * var(--u)),16px)}
+  .card__body{padding:clamp(13px,calc(1.3 * var(--u)),21px) clamp(13px,calc(1.3 * var(--u)),21px) clamp(15px,calc(1.5 * var(--u)),24px)}
+  .card__ico{width:clamp(30px,calc(2.9 * var(--u)),44px);height:clamp(30px,calc(2.9 * var(--u)),44px)}
+
+  .contatti__list a{font-size:clamp(13px,calc(1.15 * var(--u)),18px)}
+  .contatti__ico{width:clamp(24px,calc(2.2 * var(--u)),34px);height:clamp(24px,calc(2.2 * var(--u)),34px)}
+  .contatti__ico svg{width:100%;height:100%}
+  .contatti__lead{margin-top:clamp(20px,calc(2.4 * var(--u)),40px)}
+}

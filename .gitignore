@@ -1,0 +1,23 @@
+# sorgenti pesanti / materiale di lavoro — non servono al sito pubblicato
+background.png
+sito completo.png
+nome.png
+nome corsivo.png
+primo album.jpg
+secondo album.jpg
+live.jpg
+foto.jpg
+vecchio gruppo.jpg
+mauro.png
+
+# materiale di lavoro audio/immagini (non serve al sito pubblicato)
+torre.wav
+torre.mp3
+peaks/
+riferimenti/
+nuove immagini/
+
+# sistema
+Thumbs.db
+desktop.ini
+.DS_Store

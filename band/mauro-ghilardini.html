@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mauro Ghilardini — La Torre dell'Alchimista</title>
+<meta name="description" content="Mauro Ghilardini, voce e chitarra acustica de La Torre dell'Alchimista.">
+<link rel="icon" href="../assets/img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<style>
+  /* Pagina del componente: bozza. Riprende i colori della sezione
+     "La band" (carta crema, inchiostro, filetto d'oro). */
+  body{background:var(--crema-band)}
+  .persona{
+    min-height:100svh;
+    max-width:1300px;margin-inline:auto;
+    padding:calc(var(--nav-h) + 40px) var(--gutter) 60px;
+    display:grid;grid-template-columns:minmax(280px,1.3fr) 1fr;
+    gap:clamp(32px,5vw,80px);align-items:center;
+  }
+  .persona__foto img{
+    width:100%;
+    border:1px solid var(--oro);
+    box-shadow:0 24px 50px -20px rgb(43 32 24 / .5);
+  }
+  .persona__ruolo{font-style:italic;color:#9a6b24;font-size:clamp(17px,1.5vw,21px);margin:0}
+  .persona__bio{color:var(--inchiostro-soft);font-size:clamp(16px,1.3vw,19px);line-height:1.7;max-width:46ch}
+  .persona__back{
+    position:fixed;top:0;left:0;right:0;z-index:50;height:var(--nav-h);
+    display:flex;align-items:center;padding-inline:var(--gutter);
+    background:rgba(8,22,44,.92);color:var(--su-blu);
+    font-size:15px;letter-spacing:.04em;
+  }
+  .persona__back a{transition:color .3s ease}
+  .persona__back a:hover{color:var(--oro-chiaro)}
+  .persona .rule{display:block;width:58px}
+  @media (max-width:760px){
+    .persona{grid-template-columns:1fr;align-items:start}
+    .persona__foto{max-width:none}
+  }
+</style>
+</head>
+<body>
+
+<nav class="persona__back"><a href="../index.html#band">&#8592; La Torre dell'Alchimista</a></nav>
+
+<main class="persona">
+  <figure class="persona__foto" style="margin:0">
+    <img src="../assets/img/band/mauro-ghilardini-quadro.webp" width="1448" height="1086" alt="Mauro Ghilardini, ritratto dipinto">
+  </figure>
+  <div>
+    <h1 class="h2" style="margin:0">Mauro Ghilardini</h1>
+    <span class="rule"></span>
+    <p class="persona__ruolo">voce e chitarra acustica</p>
+    <p class="persona__bio">[ Biografia ]</p>
+  </div>
+</main>
+
+</body>
+</html>
